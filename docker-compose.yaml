@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  db:
+    container_name: cassandra
+    image: cassandra:latest
+    volumes:
+      - /Development/PetProjects/CassandraTut/data/node1:/var/lib/cassandra/data
+    ports:
+      - 9042:9042
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=datacenter1
+  datascience-notebook:
+    depends_on:
+      - db
+    build: '.'
+    command: "start-notebook.sh \
+     -ip='*' --NotebookApp.token='' --NotebookApp.password=''"
+    volumes:
+      - ./:/home/jovyan/work
+    ports:
+      - 8888:8888

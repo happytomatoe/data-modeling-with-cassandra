@@ -1,9 +1,1 @@
-cassandra-driver
-cython
-numpy
-pandas
-matplotlib
-#netCDF4
-folium
-lxml
-nltk
+cassandra-driver==3.11.0

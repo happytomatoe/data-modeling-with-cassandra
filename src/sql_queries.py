@@ -48,7 +48,7 @@ CREATE TABLE {TableNames.music_app_history}(
 """
 MUSIC_APP_HISTORY_INSERT_STATEMENT = f"""
 INSERT INTO {TableNames.music_app_history}(artist, title, length, session_id, item_in_session) 
-VALUES ( ?,?, ?,?,?)
+VALUES (?,?,?,?,?)
 """
 
 # FIND
@@ -61,7 +61,7 @@ SELECT artist, title, length FROM {TableNames.music_app_history}
  WHERE session_id = ? And item_in_session = ?
  """
 SELECT_FROM_ARTIST_LISTENING_HISTORY_BY_USER_ID_AND_SESSION_ID = f"""
- SELECT artist, title,username  FROM {TableNames.artist_listening_history}
+ SELECT artist, title, username  FROM {TableNames.artist_listening_history}
  WHERE user_id = ? and session_id = ?
 """
 

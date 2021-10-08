@@ -30,7 +30,7 @@ create-venv:
 
 venv: requirements.txt
 	test -d $(VENV_NAME) || virtualenv -p python3 $(VENV_NAME)
-	${PYTHON_VENV} -m pip install -U pip
+	${PYTHON_VENV} -m pip install --upgrade  pip
 	${PYTHON_VENV} -m pip  install  -r requirements.txt
 	touch $(VENV_NAME)/bin/activate
 
@@ -47,7 +47,7 @@ recreate-tables:
 	${PYTHON_VENV} src/create_tables.py
 
 run: recreate-tables
-	export POSTGRES_URL=postgresql://postgres:postgres@localhost/postgres
+	rm -f event_datafile_new.csv
 	${PYTHON_VENV} src/etl.py
 
 doc: venv

@@ -18,6 +18,7 @@ def get_events_file_paths(relative_data_path):
     # checking your current working directory
     # print(os.getcwd())
     # Get your current folder and subfolder event data
+    file_path_list = ""
     filepath = os.getcwd() + relative_data_path
     # Create a for loop to create a list of files and collect each filepath
     for root, dirs, files in os.walk(filepath):
@@ -88,12 +89,13 @@ def insert_data(session, file):
 
     with open(file, encoding='utf8') as f:
         for line in csv.DictReader(f):
-            values = (line[ColumnNames.artist],
-                      line[ColumnNames.song],
-                      float(line[ColumnNames.length]),
-                      int(line[ColumnNames.session_id]),
-                      int(line[ColumnNames.item_in_session])
-                      )
+            values = (
+                line[ColumnNames.artist],
+                line[ColumnNames.song],
+                float(line[ColumnNames.length]),
+                int(line[ColumnNames.session_id]),
+                int(line[ColumnNames.item_in_session])
+            )
             print(values)
             session.execute(MUSIC_APP_HISTORY_INSERT_STATEMENT, values)
             values = (line[ColumnNames.artist],

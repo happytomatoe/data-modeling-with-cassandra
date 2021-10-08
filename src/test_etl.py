@@ -18,7 +18,7 @@ class TestETL:
         count = cur.fetchone()[0]
         assert count == 1, f"""Songplays table should contain 1 record with artist_id " \
                             and song_id set but was {count}"""
-        for table_name in TableNames.ALL_TABLES:
+        for table_name in TableNames.all_tables:
             cur.execute(f"SELECT COUNT(*) FROM {table_name} ")
             count = cur.fetchone()[0]
             assert count > 1, f"Table {table_name} should contain records while actual " \

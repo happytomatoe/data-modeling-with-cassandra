@@ -82,21 +82,17 @@ class ColumnNames:
 
 
 def insert_data(session, file):
-    # "artist","firstName","gender",
-    # "itemInSession",
-    # "lastName","length","level",
-    # "location","sessionId","song","userId"
 
     with open(file, encoding='utf8') as f:
         for line in csv.DictReader(f):
-            values = (
-                line[ColumnNames.artist],
-                line[ColumnNames.song],
-                float(line[ColumnNames.length]),
-                int(line[ColumnNames.session_id]),
-                int(line[ColumnNames.item_in_session])
-            )
-            print(values)
+            values = [line[ColumnNames.artist],
+                      line[ColumnNames.song],
+                      float(line[ColumnNames.length]),
+                      int(line[ColumnNames.session_id]),
+                      int(line[ColumnNames.item_in_session]),
+
+                      ]
+            # print(values)
             session.execute(MUSIC_APP_HISTORY_INSERT_STATEMENT, values)
             values = (line[ColumnNames.artist],
                       line[ColumnNames.song],
@@ -114,10 +110,34 @@ def insert_data(session, file):
 
 
 def select_statements(session):
+
+    print("""
+ TO-DO: Query 1:  Give me the artist, song title and song's length in the music app history
+ that was heard during sessionId = 338, and itemInSession = 4
+""")
+    r = session.execute(SELECT_FROM_MUSIC_APP_HISTORY_BY_SESSION_ID_AND_ITEM_IN_SESSION,
+                        (338, 4))
+    for x in r:
+        print(x)
+    print("""
+    Query 2: Give me only the following: name of artist, song (sorted by itemInSession)
+     and user (first and last name)
+    for userid = 10, sessionid = 182
+    """)
     r = session.execute(SELECT_FROM_ARTIST_LISTENING_HISTORY_BY_USER_ID_AND_SESSION_ID,
                         (10, 182))
     for x in r:
         print(x)
+
+    print("""
+ TO-DO: Query 3: Give me every user name (first and last) in my music app history who listened 
+ to the song 'All Hands Against His Own'
+""")
+    r = session.execute(SELECT_FROM_USER_LISTENING_HISTORY_BY_SONG,
+                        ('All Hands Against His Own', ))
+    for x in r:
+        print(x)
+
 
 
 def main():

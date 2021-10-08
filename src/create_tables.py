@@ -1,49 +1,41 @@
-import psycopg2
+from cassandra.cluster import Cluster
 
 from sql_queries import DROP_TABLE_QUERIES, CREATE_TABLE_QUERIES
 
 
-def create_database():
-    """
-    - Creates and connects to the sparkifydb
-    - Returns the connection and cursor to sparkifydb
+def create_keyspace():
     """
 
-    # connect to default database
-    conn = psycopg2.connect("host=127.0.0.1 dbname=studentdb user=student password=student")
-    conn.set_session(autocommit=True)
-    cur = conn.cursor()
+    :return:
+    """
+    cluster = Cluster()
 
-    # create sparkify database with UTF8 encoding
-    cur.execute("DROP DATABASE IF EXISTS sparkifydb")
-    cur.execute("CREATE DATABASE sparkifydb WITH ENCODING 'utf8' TEMPLATE template0")
-
-    # close connection to default database
-    conn.close()
-
-    # connect to sparkify database
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
-    cur = conn.cursor()
-
-    return cur, conn
+    session = cluster.connect()
+    session.execute("""
+        CREATE KEYSPACE IF NOT EXISTS sparkify
+          WITH REPLICATION = { 
+           'class' : 'SimpleStrategy', 
+           'replication_factor' : 1 
+          };
+        """)
+    session.set_keyspace("sparkify")
+    return cluster, session
 
 
-def drop_tables(cur, conn):
+def drop_tables(session):
     """
     Drops each table using the queries in `DROP_TABLE_QUERIES` list.
     """
     for query in DROP_TABLE_QUERIES:
-        cur.execute(query)
-        conn.commit()
+        session.execute(query)
 
 
-def create_tables(cur, conn):
+def create_tables(session):
     """
     Creates each table using the queries in `CREATE_TABLE_QUERIES` list.
     """
     for query in CREATE_TABLE_QUERIES:
-        cur.execute(query)
-        conn.commit()
+        session.execute(query)
 
 
 def main():
@@ -51,20 +43,21 @@ def main():
     - Drops (if exists) and Creates the sparkify database.
 
     - Establishes connection with the sparkify database and gets
-    cursor to it.
+    session.
 
     - Drops all the tables.
 
     - Creates all tables needed.
 
-    - Finally, closes the connection.
+    - Finally, shutdowns the session and connection to cluster.
     """
-    cur, conn = create_database()
+    cluster, session = create_keyspace()
 
-    drop_tables(cur, conn)
-    create_tables(cur, conn)
+    drop_tables(session)
+    create_tables(session)
 
-    conn.close()
+    session.shutdown()
+    cluster.shutdown()
 
 
 if __name__ == "__main__":

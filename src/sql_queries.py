@@ -1,43 +1,74 @@
 class TableNames:
-    TIME = "time"
-    ARTISTS = "artists"
-    SONGS = "songs"
-    USERS = "users"
-    SONGPLAYS = "songplays"
-    ALL_TABLES = [TIME, ARTISTS, SONGPLAYS, SONGS, USERS]
+    music_app_history = "music_app_history"
+    artist_listening_history = "artist_listening_history"
+    user_listening_history = "user_listening_history"
+    ALL_TABLES = [music_app_history, artist_listening_history, user_listening_history]
 
-
-DROP_TABLE_QUERY_TEMPLATE = "DROP TABLE IF EXISTS {};"
-
-# DROP TABLES
-
-SONGPLAY_TABLE_DROP = DROP_TABLE_QUERY_TEMPLATE.format(TableNames.SONGPLAYS)
 
 # CREATE TABLES
 
-# alter table time owner to postgres;
+ARTIST_LISTENING_HISTORY_TABLE_CREATE_STATEMENT = f"""
+CREATE TABLE {TableNames.artist_listening_history}(
+   artist text, 
+   title text, 
+   length float,
+   username text,
+   session_id int,
+   item_in_session int,
+   user_id int,
+   PRIMARY KEY ((session_id,user_id),item_in_session)
+   );
+"""
+ARTIST_LISTENING_HISTORY_INSERT_STATEMENT = f"""
+INSERT INTO {TableNames.artist_listening_history}(artist, title, length, username,session_id, 
+                                      item_in_session, user_id)
+VALUES (?,?,?,?,?,?,?)
+"""
 
-SONGPLAY_TABLE_CREATE = (f"""
-CREATE TABLE {TableNames.SONGPLAYS}(
-    id uuid not null constraint songplays_pk primary key,
-    start_time timestamp not null constraint songplays__time_fk references time,
-    user_id bigint constraint songplays__user_fk references users,
-    level varchar,
-    song_id varchar constraint songplays__songs_fk references songs,
-    artist_id varchar constraint songplays__artist_fk references artists,
-    session_id bigint,
-    location varchar,
-    user_agent varchar
-    );
-""")
+USER_LISTENING_HISTORY_TABLE_CREATE_STATEMENT = f"""
+CREATE TABLE {TableNames.user_listening_history}(
+    username text,
+    song text,
+    PRIMARY KEY (song)
+);
+"""
+USER_LISTENING_HISTORY_INSERT_STATEMENT = f"""
+INSERT INTO {TableNames.user_listening_history}(username,song) VALUES (?,?)
+"""
 
-# FIND SONGS
-SONG_SELECT = (f"""
-    SELECT s.song_id, s.artist_id,s.title,a.name,s.duration FROM {TableNames.SONGS} s
-    JOIN {TableNames.ARTISTS} a ON s.artist_id=a.artist_id
-    WHERE (s.title,a.name,s.duration) in ({{}}) 
-    """)
+MUSIC_APP_HISTORY_TABLE_CREATE_STATEMENT = f"""
+CREATE TABLE {TableNames.music_app_history}(
+   artist text, 
+   title text, 
+   length float,
+   session_id bigint,
+   item_in_session int,
+   PRIMARY KEY (session_id, item_in_session)
+   )
+"""
+MUSIC_APP_HISTORY_INSERT_STATEMENT = f"""
+INSERT INTO {TableNames.music_app_history}(artist, title, length, session_id, item_in_session) 
+VALUES ( ?,?, ?,?,?)
+"""
+
+# FIND
+SELECT_FROM_USER_LISTENING_HISTORY_BY_SONG = f"""
+SELECT username FROM {TableNames.user_listening_history}
+WHERE song=?
+"""
+SELECT_FROM_MUSIC_APP_HISTORY_BY_SESSION_ID_AND_ITEM_IN_SESSION = f"""
+SELECT artist, title, length FROM {TableNames.music_app_history}
+ WHERE session_id = ? And item_in_session = ?
+ """
+SELECT_FROM_ARTIST_LISTENING_HISTORY_BY_USER_ID_AND_SESSION_ID = f"""
+ SELECT artist, title,username  FROM {TableNames.artist_listening_history}
+ WHERE user_id = ? and session_id = ?
+"""
 
 # QUERY LISTS
-CREATE_TABLE_QUERIES = []
-DROP_TABLE_QUERIES = []
+CREATE_TABLE_QUERIES = [MUSIC_APP_HISTORY_TABLE_CREATE_STATEMENT,
+                        ARTIST_LISTENING_HISTORY_TABLE_CREATE_STATEMENT,
+                        USER_LISTENING_HISTORY_TABLE_CREATE_STATEMENT]
+
+DROP_TABLE_QUERY_TEMPLATE = "DROP TABLE IF EXISTS {};"
+DROP_TABLE_QUERIES = [DROP_TABLE_QUERY_TEMPLATE.format(x) for x in TableNames.ALL_TABLES]

@@ -1,1 +1,5 @@
 cassandra-driver
+yapf
+isort
+autopep8
+pandas

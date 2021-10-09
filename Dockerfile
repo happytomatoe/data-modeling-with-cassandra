@@ -27,3 +27,22 @@ RUN jupyter nbextension enable hide_input/main
 RUN jupyter nbextension enable spellchecker/main
 RUN jupyter nbextension enable toc2/main
 RUN jupyter nbextension enable toggle_all_line_numbers/main
+
+RUN jupyter nbextension enable code_prettify/isort
+RUN jupyter nbextension enable select_keymap/main
+RUN jupyter nbextension enable table_beautifier/main
+RUN jupyter nbextension enable move_selected_cells/main
+RUN jupyter nbextension enable scratchpad/main
+RUN jupyter nbextension enable skip-traceback/main
+RUN jupyter nbextension enable tree-filter/index
+RUN jupyter nbextension enable varInspector/main
+RUN jupyter nbextension enable snippets/main
+RUN jupyter nbextension enable scroll_down/main
+RUN jupyter nbextension enable navigation-hotkeys/main
+RUN jupyter nbextension enable code_prettify/autopep8
+RUN jupyter nbextension enable runtools/main
+RUN jupyter nbextension enable keyboard_shortcut_editor/main
+RUN jupyter nbextension enable livemdpreview/livemdpreview
+RUN jupyter nbextension enable help_panel/help_panel
+
+

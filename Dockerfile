@@ -38,11 +38,16 @@ RUN jupyter nbextension enable tree-filter/index
 RUN jupyter nbextension enable varInspector/main
 RUN jupyter nbextension enable snippets/main
 RUN jupyter nbextension enable scroll_down/main
+
 RUN jupyter nbextension enable navigation-hotkeys/main
 RUN jupyter nbextension enable code_prettify/autopep8
+
 RUN jupyter nbextension enable runtools/main
-RUN jupyter nbextension enable keyboard_shortcut_editor/main
+#RUN jupyter nbextension enable keyboard_shortcut_editor/main
+# disable help(H)
+
 RUN jupyter nbextension enable livemdpreview/livemdpreview
 RUN jupyter nbextension enable help_panel/help_panel
+RUN jupyter nbextension enable autoscroll/main
 
 
